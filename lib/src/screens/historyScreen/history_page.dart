@@ -26,7 +26,7 @@ class HistoryScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return SingleAnimalTile(
             index: index,
-            animal: homePro.searchList![index],
+            animal: homePro.adoptedAnimalList[index],
           );
         },
         separatorBuilder: (context, index) {

@@ -24,26 +24,20 @@ class HomeScreenProvider extends ChangeNotifier {
     listenControllerAllFeeds(context: context);
   }
 
-  ///Scroll controller
-  ScrollController controllerAnimalList = ScrollController();
-
   ///Listener for the controller pagination
+  ScrollController controllerAnimalList = ScrollController();
   void listenControllerAllFeeds({required BuildContext context}) {
-    print("pagination");
     controllerAnimalList.dispose();
     controllerAnimalList = ScrollController();
     controllerAnimalList.addListener(() {
       if (controllerAnimalList.position.maxScrollExtent ==
           controllerAnimalList.offset) {
-        print("scroll");
         if (paginationList.isNotEmpty) {
           Future.delayed(const Duration(milliseconds: 1000), () {
             animalList.addAll(pagList);
 
-            print(paginationList.length);
-            pagList.clear();
+            pagList = [];
 
-            print(paginationList.length);
             notifyListeners();
           });
         }
@@ -51,47 +45,42 @@ class HomeScreenProvider extends ChangeNotifier {
     });
   }
 
-
   ///Search controller
   List<Animal>? searchList;
   TextEditingController controller = TextEditingController();
   void onTextChange(String val) {
     if (val.isNotEmpty) {
-      pagList=[];
-
+      pagList = [];
       searchList = animalList
           .where((element) => ((element.name ?? "")
               .toUpperCase()
               .contains((val).toUpperCase())))
           .toList();
       notifyListeners();
-    }else{
-      pagList=[];
+    } else {
+      pagList = [];
       pagList = paginationList;
-      print(paginationList.length);
-      searchList=animalList;
+      searchList = animalList;
       notifyListeners();
     }
   }
 
   List<Animal> adoptedAnimalList = [];
 
-  ///This function separate adopted pets
+  ///This function separate adopted pets and make chronologically ordered
   void onAdoptClicked(int id) {
-    (searchList ?? []).firstWhere((element) => (element.id == id)).isAdopt =
-        true;
     (searchList ?? []).firstWhere((element) => (element.id == id)).adoptedTime =
         DateTime.now();
 
-    Animal adoptedAnimal = (searchList ?? []).firstWhere((element) => (element.id == id));
+    (searchList ?? []).firstWhere((element) => (element.id == id)).isAdopt =
+        true;
+
+    Animal adoptedAnimal =
+        (searchList ?? []).firstWhere((element) => (element.id == id));
     adoptedAnimalList.add(adoptedAnimal);
     if (adoptedAnimalList.isNotEmpty) {
       adoptedAnimalList.sort(
           (a, b) => b.adoptedTime!.second.compareTo(a.adoptedTime!.second));
-
-      adoptedAnimalList.forEach((element) {
-        print(element.adoptedTime);
-      });
     }
 
     notifyListeners();
@@ -103,9 +92,8 @@ class HomeScreenProvider extends ChangeNotifier {
     isDark = !isDark;
     notifyListeners();
 
-    return isDark?"Dark":"Light";
+    return isDark ? "Dark" : "Light";
   }
-
 
   ///Navigation bar controller
   List screens = [
